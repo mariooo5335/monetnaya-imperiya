@@ -139,8 +139,8 @@ h2{font-size:15px;margin:0 0 12px;letter-spacing:.04em}
   ["Завод оригинального лего","🧱",25000000000,16000000]
  ];
 
- // Каждое улучшение имеет точную прибавку.
- // После первых пяти улучшений прибавка продолжает расти.
+ 
+ 
  const steps = [1,5,10,25,50];
 
  function upgradeAmount(level){
@@ -163,7 +163,7 @@ h2{font-size:15px;margin:0 0 12px;letter-spacing:.04em}
    ? [...new Set(state.bought.filter(i=>Number.isInteger(i)&&i>=0&&i<businesses.length))].sort((a,b)=>a-b)
    : [];
 
- // Не допускаем пропусков в порядке купленных предприятий.
+ 
  let validBought = [];
  for(let i=0;i<state.bought.length;i++){
    if(state.bought[i] !== i) break;
@@ -178,7 +178,7 @@ h2{font-size:15px;margin:0 0 12px;letter-spacing:.04em}
  const $ = id => document.getElementById(id);
  const fmt = n => Math.floor(n).toLocaleString("ru-RU");
 
- // Важно: сила клика равна 1 плюс сумма всех уже купленных улучшений.
+ 
  function clickPower(){
    let total = 1;
    for(let level=0;level<state.clickLevel;level++){
