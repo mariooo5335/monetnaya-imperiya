@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#10091e">
+<title>Монетная империя</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#0b0712;--panel:#171024;--panel2:#211433;--purple:#9b5cff;--pink:#d36cff;--gold:#ffd76a;--muted:#b9accb;--line:#39234f}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 25%,#291344 0%,#10091e 48%,#08060d 100%);color:#fff;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.app{max-width:1120px;margin:auto;padding:16px 14px 30px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.brand{font-weight:900;letter-spacing:.03em;font-size:clamp(18px,3vw,25px)}.brand span{color:#c18bff}
+.pill{background:#21152f;border:1px solid #493163;border-radius:999px;padding:8px 12px;color:#d9c7f1;font-size:12px}
+.balance{background:linear-gradient(135deg,#28143f,#171023);border:1px solid #52326f;border-radius:22px;padding:17px 18px;text-align:center;box-shadow:0 10px 40px #0004;margin-bottom:14px}
+.balance small{color:var(--muted);font-weight:700;letter-spacing:.12em;text-transform:uppercase}.money{font-size:clamp(30px,6vw,48px);font-weight:950;line-height:1.2;margin-top:4px;text-shadow:0 0 24px #c18bff55}.coin-label{color:#d5c1ed;font-size:13px;margin-top:3px}
+.layout{display:grid;grid-template-columns:minmax(170px,.8fr) minmax(230px,1.2fr) minmax(220px,1fr);gap:14px;align-items:stretch}
+.panel{background:linear-gradient(160deg,#1b1228ee,#100b19ee);border:1px solid var(--line);border-radius:22px;padding:16px;min-width:0;box-shadow:0 12px 30px #0003}
+h2{font-size:15px;margin:0 0 12px;letter-spacing:.04em}.sub{color:var(--muted);font-size:12px;line-height:1.45}
+.upgrade{width:100%;text-align:left;background:#211432;border:1px solid #4d2b6a;border-radius:15px;padding:13px;margin-top:10px;transition:.15s}
+.upgrade:active{transform:scale(.98)}.upgrade strong{display:block;font-size:14px}.upgrade span{display:block;color:#cbb4e8;font-size:12px;margin-top:4px}.upgrade:disabled{opacity:.4;cursor:not-allowed}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:350px;overflow:hidden;position:relative}
+.center:before{content:"";position:absolute;width:250px;height:250px;border-radius:50%;background:#8b3dff18;filter:blur(30px)}
+.coin-button{position:relative;width:min(62vw,220px);height:min(62vw,220px);max-width:220px;max-height:220px;border-radius:50%;background:radial-gradient(circle at 32% 25%,#fff2a6 0%,#ffd95a 16%,#f4a923 48%,#a95a0d 72%,#51216d 74%,#2c1544 100%);box-shadow:inset 0 5px 8px #fff9,inset 0 -12px 20px #562080aa,0 0 0 7px #b879ff22,0 0 40px #a24dff66,0 15px 30px #0008;border:3px solid #ffe68c;transition:transform .08s}
+.coin-button:active{transform:scale(.94)}.coin-button:after{content:"₿";font-weight:1000;font-size:clamp(76px,15vw,120px);color:#7b3b0c;text-shadow:0 2px 0 #fff6a8,0 5px 0 #e28b16,0 8px 15px #632600;position:absolute;inset:0;display:grid;place-items:center}
+.coin-hint{position:relative;margin-top:18px;font-size:13px;color:#d9c8ee}.click-stat{position:relative;margin-top:8px;background:#21152f;border:1px solid #472c60;border-radius:999px;padding:8px 13px;font-size:12px;color:#f1e4ff}
+.biz-list{display:flex;flex-direction:column;gap:9px}.biz{display:flex;gap:10px;align-items:center;padding:11px;background:#1d132a;border:1px solid #382249;border-radius:15px}.biz-icon{width:44px;height:44px;flex:0 0 44px;border-radius:13px;display:grid;place-items:center;font-size:24px;background:linear-gradient(145deg,#59328a,#251439);box-shadow:inset 0 1px 2px #fff3,0 4px 12px #0004}.biz-info{min-width:0;flex:1}.biz-info strong{display:block;font-size:12px;line-height:1.3}.biz-info small{display:block;color:#bda9d2;font-size:11px;margin-top:4px}.buy{background:linear-gradient(135deg,#a75cff,#6b36c9);padding:9px 10px;border-radius:10px;font-size:11px;font-weight:850;white-space:nowrap}.buy:disabled{opacity:.35;cursor:not-allowed}.locked{padding:16px;border:1px dashed #4b345c;border-radius:15px;text-align:center;color:#bca9cf;font-size:12px;line-height:1.5}
+.notice{font-size:11px;color:#9c8bac;text-align:center;margin-top:15px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#2b1a40;border:1px solid #a36add;border-radius:14px;padding:12px 16px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:10;box-shadow:0 8px 30px #0008}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:760px){.layout{grid-template-columns:1fr 1fr}.center{grid-column:1/-1;grid-row:1;min-height:310px}.upgrades-panel{grid-column:1}.business-panel{grid-column:2}.panel{padding:13px}.biz{flex-wrap:wrap}.buy{width:100%}.biz-info{min-width:90px}}
+@media(max-width:420px){.layout{grid-template-columns:1fr}.center,.upgrades-panel,.business-panel{grid-column:1}.center{grid-row:1}.upgrades-panel{grid-row:2}.business-panel{grid-row:3}.biz{flex-wrap:nowrap}.buy{width:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">✦ МОНЕТНАЯ <span>ИМПЕРИЯ</span></div>
+    <div class="pill">УРОВЕНЬ <b id="level">1</b></div>
+  </header>
+  <section class="balance">
+    <small>ТВОЙ БАЛАНС</small>
+    <div class="money" id="balance">0</div>
+    <div class="coin-label">монет</div>
+  </section>
+  <main class="layout">
+    <section class="panel upgrades-panel">
+      <h2>⚡ УЛУЧШЕНИЕ КЛИКА</h2>
+      <div class="sub">Усиливай каждый тап и зарабатывай быстрее.</div>
+      <div class="click-stat">За клик: <b id="perClick">+1</b> 🪙</div>
+      <button class="upgrade" id="upgradeBtn">
+        <strong>Усилить клик</strong>
+        <span id="upgradeDetail">+1 к монетам · Цена: 25</span>
+      </button>
+      <div class="sub" style="margin-top:12px">Уровень улучшения: <b id="upgradeLevel">0</b></div>
+    </section>
+    <section class="panel center">
+      <button class="coin-button" id="coin" aria-label="Нажать на монету"></button>
+      <div class="coin-hint">Нажимай на монету, чтобы заработать</div>
+      <div class="click-stat" id="incomeStat">Пассивный доход: 0 / сек</div>
+    </section>
+    <section class="panel business-panel">
+      <h2>🏭 ПРЕДПРИЯТИЯ</h2>
+      <div class="sub" style="margin-bottom:12px">Покупай бизнес по порядку — следующее предприятие появится после покупки предыдущего.</div>
+      <div class="biz-list" id="businesses"></div>
+    </section>
+  </main>
+  <div class="notice">Прогресс хранится на этом устройстве. Пассивный доход начисляется, пока игра открыта и активна.</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(() => {
+ const businesses = [
+  ["Игровой автомат","🎰",100,1],
+  ["Ларёк с лимонадом","🍋",350,3],
+  ["Кофейня","☕",900,7],
+  ["Пиццерия","🍕",2200,15],
+  ["Магазин игрушек","🧸",5000,30],
+  ["Мини-маркет","🛒",11000,55],
+  ["Кинотеатр","🎬",24000,100],
+  ["Игровой клуб","🕹️",50000,180],
+  ["Пекарня","🥐",100000,320],
+  ["Автомойка","🚗",190000,560],
+  ["Фитнес-клуб","🏋️",350000,950],
+  ["Ресторан","🍽️",650000,1600],
+  ["Отель","🏨",1200000,2700],
+  ["Сеть кофеен","🧋",2200000,4500],
+  ["Супермаркет","🏬",4000000,7500],
+  ["Парк аттракционов","🎡",7200000,12000],
+  ["Студия игр","🎮",13000000,20000],
+  ["Автосалон","🚘",23000000,33000],
+  ["Торговый центр","🏢",41000000,55000],
+  ["Авиакомпания","✈️",73000000,90000],
+  ["Космический туризм","🚀",130000000,150000],
+  ["Фабрика роботов","🤖",230000000,250000],
+  ["Энергетическая станция","⚡",410000000,420000],
+  ["Крупный банк","🏦",730000000,700000],
+  ["Медиахолдинг","📡",1300000000,1150000],
+  ["Технопарк","🧬",2300000000,1900000],
+  ["Город будущего","🌆",4100000000,3200000],
+  ["Орбитальная станция","🛰️",7300000000,5400000],
+  ["Лунная база","🌕",13000000000,9000000],
+  ["Завод оригинального лего","🧱",25000000000,16000000]
+ ];
+ const steps = [1,5,10,25,50];
+ const fmt = n => Math.floor(n).toLocaleString("ru-RU");
+ let state = {coins:0, clickLevel:0, bought:[]};
+ try { const saved = JSON.parse(localStorage.getItem("coinEmpireSave")||"null"); if(saved && typeof saved.coins==="number"){state={...state,...saved};} } catch(e){}
+ state.bought = Array.isArray(state.bought) ? state.bought : [];
+ let active = true, lastTick = Date.now(), toastTimer;
+ const $ = id => document.getElementById(id);
+ const clickPower = () => 1 + steps.slice(0,state.clickLevel).reduce((a,b)=>a+b,0);
+ const upgradeCost = () => Math.floor(25*Math.pow(2.25,state.clickLevel));
+ const income = () => state.bought.reduce((sum,i)=>sum+(businesses[i]?.[3]||0),0);
+ function save(){try{localStorage.setItem("coinEmpireSave",JSON.stringify(state));}catch(e){}}
+ function notify(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),1700);}
+ function render(){
+  $("balance").textContent=fmt(state.coins); $("perClick").textContent="+"+fmt(clickPower()); $("upgradeLevel").textContent=state.clickLevel;
+  $("upgradeDetail").textContent="+"+(steps[state.clickLevel]||Math.max(50,Math.floor(50*Math.pow(1.8,state.clickLevel-4))))+" к монетам · Цена: "+fmt(upgradeCost());
+  $("upgradeBtn").disabled=state.coins<upgradeCost();
+  $("incomeStat").textContent="Пассивный доход: "+fmt(income())+" / сек";
+  $("level").textContent=1+Math.floor(state.bought.length/3);
+  const next=state.bought.length;
+  const list=$("businesses");list.innerHTML="";
+  if(next<businesses.length){
+   const [name,icon,cost,rate]=businesses[next];
+   const item=document.createElement("div");item.className="biz";
+   item.innerHTML=`<div class="biz-icon">${icon}</div><div class="biz-info"><strong>${name}</strong><small>+${fmt(rate)} монет/сек<br>Цена: ${fmt(cost)}</small></div>`;
+   const btn=document.createElement("button");btn.className="buy";btn.textContent="Купить";
+   btn.disabled=state.coins<cost;btn.addEventListener("click",()=>buyBusiness(next));item.appendChild(btn);list.appendChild(item);
+  }else{
+   const done=document.createElement("div");done.className="locked";done.textContent="Все 30 предприятий куплены! Ты построил настоящую монетную империю.";list.appendChild(done);
+  }
+ }
+ function buyBusiness(i){const b=businesses[i];if(i!==state.bought.length||state.coins<b[2])return;state.coins-=b[2];state.bought.push(i);save();render();notify("Куплено: "+b[0]+"!");}
+ $("coin").addEventListener("click",()=>{if(!active)return;state.coins+=clickPower();save();render();});
+ $("upgradeBtn").addEventListener("click",()=>{
+  const cost=upgradeCost();if(state.coins<cost)return;state.coins-=cost;state.clickLevel++;
+  save();render();notify("Клик стал сильнее!");
+ });
+ document.addEventListener("visibilitychange",()=>{active=!document.hidden;lastTick=Date.now();});
+ setInterval(()=>{const now=Date.now();if(active&&!document.hidden){const elapsed=Math.min((now-lastTick)/1000,1.5);const earned=income()*elapsed;if(earned>0){state.coins+=earned;save();render();}}lastTick=now;},1000);
+ const tg=window.Telegram?.WebApp;
+ if(tg){tg.ready();tg.expand();try{tg.setHeaderColor("#10091e");tg.setBackgroundColor("#10091e");}catch(e){}}
+ render();
+})();
+</script>
+</body>
+</html>
